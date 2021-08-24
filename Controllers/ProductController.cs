@@ -50,5 +50,13 @@ namespace WebAPI_AWS.Controllers
             context.SaveChanges();
             return true;
         }
+
+        [HttpDelete("[action]")]
+        public bool DeleteById([FromQuery] int id)
+        {
+            context.Products.Remove(new Product() { ProductId = id });
+            context.SaveChanges();
+            return true;
+        }
     }
 }

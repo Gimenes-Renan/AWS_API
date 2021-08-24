@@ -43,12 +43,13 @@ namespace WebAPI_AWS.Controllers
             return data.Entity;
         }
 
-        [HttpDelete]
-        public bool Delete([FromBody] Stock body)
-        {
-            context.Remove(body);
-            context.SaveChanges();
-            return true;
-        }
+        //[HttpDelete]
+        //public bool Delete([FromBody] Stock body)
+        //{
+        //    context.Remove(body);
+        //    context.SaveChanges();
+        //    return true;
+        //}
+
     }
 }
