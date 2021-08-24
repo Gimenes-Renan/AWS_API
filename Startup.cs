@@ -33,7 +33,11 @@ namespace AWS_API
             services.AddDbContext<DatabaseContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("db1")));
 
-            services.AddCors();
+            services.AddCors(c => c.AddPolicy("CorsPolicy", builder =>
+                        builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+            ));
 
             services.AddSwaggerGen(c =>
             {
@@ -55,7 +59,7 @@ namespace AWS_API
 
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
