@@ -26,6 +26,23 @@ namespace WebAPI_AWS.Controllers
             return context.Products.ToArray();
         }
 
+        [HttpGet("{id:int}")]
+        public Product Get([FromRoute] int id)
+        {
+            return context.Products.Where(p => p.ProductId == id).FirstOrDefault();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<Product> Search([FromQuery] string title)
+        {
+            if (!string.IsNullOrEmpty(title))
+            {
+                return context.Products.Where(p => p.ProductName.ToLower().Contains(title.ToLower()));
+
+            }
+            return context.Products.ToArray();
+        }
+
 
         [HttpPost]
         public Product Post([FromBody] Product body)
@@ -43,6 +60,18 @@ namespace WebAPI_AWS.Controllers
             return data.Entity;
         }
 
+        [HttpPut("{id:int}")]
+        public Product Put([FromRoute] int id, [FromBody] Product body)
+        {
+            if (id == body.ProductId)
+            {
+                var data = context.Update(body);
+                context.SaveChanges();
+                return data.Entity;
+            }
+            return null;
+        }
+
         [HttpDelete]
         public bool Delete([FromBody] Product body)
         {
@@ -51,8 +80,8 @@ namespace WebAPI_AWS.Controllers
             return true;
         }
 
-        [HttpDelete("[action]")]
-        public bool DeleteById([FromQuery] int id)
+        [HttpDelete("{id:int}")]
+        public bool Delete([FromRoute] int id)
         {
             context.Products.Remove(new Product() { ProductId = id });
             context.SaveChanges();
