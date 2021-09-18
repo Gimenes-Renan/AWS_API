@@ -1,3 +1,4 @@
+using AWS_API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -5,13 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ReactCrud.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AWS_API
 {
@@ -32,6 +28,8 @@ namespace AWS_API
 
             services.AddDbContext<DatabaseContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("db1")));
+
+            services.AddScoped<ProductService>();
 
             services.AddCors(c => c.AddPolicy("CorsPolicy", builder =>
                         builder.AllowAnyOrigin()
