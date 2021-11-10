@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AWS_API.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReactCrud.Models;
 using System;
@@ -13,23 +14,24 @@ namespace WebAPI_AWS.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly DatabaseContext context;
+        
+        private readonly ProductService productService;
 
-        public ProductController(DatabaseContext context)
+        public ProductController(ProductService productService)
         {
-            this.context = context; ;
+            this.productService = productService;
         }
 
         [HttpGet]
         public IEnumerable<Product> Get()
         {
-            return context.Products.ToArray();
+            return productService.Get(); 
         }
 
         [HttpGet("{id:int}")]
         public Product Get([FromRoute] int id)
         {
-            return context.Products.Where(p => p.ProductId == id).FirstOrDefault();
+            return  productService.Get().Where(p => p.ProductId == id).FirstOrDefault();
         }
 
         [HttpGet("[action]")]
@@ -37,27 +39,30 @@ namespace WebAPI_AWS.Controllers
         {
             if (!string.IsNullOrEmpty(title))
             {
-                return context.Products.Where(p => p.ProductName.ToLower().Contains(title.ToLower()));
+                return productService.Get().Where(p => p.ProductName.ToLower().Contains(title.ToLower()));
 
             }
-            return context.Products.ToArray();
+            return productService.Get();
         }
 
 
         [HttpPost]
-        public Product Post([FromBody] Product body)
+        public IActionResult Post([FromBody] Product body)
         {
-            var data = context.Add(body);
-            context.SaveChanges();
-            return data.Entity;
+            try
+            {
+                return Ok(productService.Add(body));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut]
         public Product Put([FromBody] Product body)
         {
-            var data = context.Update(body);
-            context.SaveChanges();
-            return data.Entity;
+            return productService.Put(body);
         }
 
         [HttpPut("{id:int}")]
@@ -65,9 +70,7 @@ namespace WebAPI_AWS.Controllers
         {
             if (id == body.ProductId)
             {
-                var data = context.Update(body);
-                context.SaveChanges();
-                return data.Entity;
+                return productService.Put(body);
             }
             return null;
         }
@@ -75,17 +78,13 @@ namespace WebAPI_AWS.Controllers
         [HttpDelete]
         public bool Delete([FromBody] Product body)
         {
-            context.Remove(body);
-            context.SaveChanges();
-            return true;
+            return productService.Delete(body);
         }
 
         [HttpDelete("{id:int}")]
         public bool Delete([FromRoute] int id)
         {
-            context.Products.Remove(new Product() { ProductId = id });
-            context.SaveChanges();
-            return true;
+            return productService.Delete(id);
         }
     }
 }

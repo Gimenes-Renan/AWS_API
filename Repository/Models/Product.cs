@@ -17,5 +17,8 @@ namespace WebAPI_AWS.Model
         public Int32 CategoryId { get; set; }
         public Int32 Quantity { get; set; }
         public decimal ListPrice { get; set; }
+
+
+        public Category Category { get; set; }
     }
 }
