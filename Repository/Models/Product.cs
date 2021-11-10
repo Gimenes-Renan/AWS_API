@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI_AWS.Model
 {
-    [Table("Product")]
+    [Table("product")]
     public class Product
     {
         [Key]
@@ -15,7 +15,7 @@ namespace WebAPI_AWS.Model
         public string ProductName { get; set; }
         public Int32 BrandId { get; set; }
         public Int32 CategoryId { get; set; }
-        public Int32 ModelYear { get; set; }
+        public Int32 Quantity { get; set; }
         public decimal ListPrice { get; set; }
     }
 }

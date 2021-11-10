@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI_AWS.Model
 {
-    [Table("Brand")]
+    [Table("brand")]
     public class Brand
     {
         [Key]

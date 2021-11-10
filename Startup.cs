@@ -27,11 +27,12 @@ namespace AWS_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             services.AddDbContext<DatabaseContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("db1")));
+            
+            services.AddScoped<DatabaseContext>();
 
             services.AddCors(c => c.AddPolicy("CorsPolicy", builder =>
                         builder.AllowAnyOrigin()
