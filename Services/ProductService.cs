@@ -25,7 +25,7 @@ namespace AWS_API.Services
                             BrandId = product.BrandId,
                             CategoryId = product.CategoryId,
                             ListPrice = product.ListPrice,
-                            ModelYear = product.ModelYear,
+                            Quantity = product.Quantity,
                             ProductName = product.ProductName,
                             Category = category
                         };
