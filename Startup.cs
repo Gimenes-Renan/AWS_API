@@ -31,6 +31,8 @@ namespace AWS_API
             services.AddScoped<DatabaseContext>();
 
             services.AddScoped<ProductService>();
+            services.AddScoped<CategoryService>();
+            services.AddScoped<BrandService>();
 
             services.AddCors(c => c.AddPolicy("CorsPolicy", builder =>
                         builder.AllowAnyOrigin()

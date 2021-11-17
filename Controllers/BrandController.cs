@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AWS_API.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReactCrud.Models;
 using System;
@@ -13,50 +14,69 @@ namespace WebAPI_AWS.Controllers
     [Route("[controller]")]
     public class BrandController : ControllerBase
     {
-        private readonly DatabaseContext context;
+        private readonly BrandService brandService;
 
-        public BrandController(DatabaseContext context)
+        public BrandController(BrandService brandService)
         {
-            this.context = context;
+            this.brandService = brandService;
         }
 
         [HttpGet]
         public IEnumerable<Brand> Get()
         {
-            return context.Brands.ToArray(); //não tem body, retorna lista completa (select * from tabela)
+            return brandService.Get();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<Brand> Search([FromQuery] string title)
+        {
+            if (!string.IsNullOrEmpty(title))
+            {
+                return brandService.Get().Where(p => p.BrandName.ToLower().Contains(title.ToLower()));
+            }
+            return brandService.Get();
         }
 
 
         [HttpPost]
-        public Brand Post([FromBody] Brand body)
+        public IActionResult Post([FromBody] Brand body)
         {
-            var data = context.Add(body); //insert -> não precisa ID
-            context.SaveChanges(); //commit;
-            return data.Entity;
+            try
+            {
+                return Ok(brandService.Add(body));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut]
         public Brand Put([FromBody] Brand body)
         {
-            var data = context.Update(body); //update -> precisa ter o ID
-            context.SaveChanges();
-            return data.Entity;
+            return brandService.Put(body);
+        }
+
+        [HttpPut("{id:int}")]
+        public Brand Put([FromRoute] int id, [FromBody] Brand body)
+        {
+            if (id == body.BrandId)
+            {
+                return brandService.Put(body);
+            }
+            return null;
         }
 
         [HttpDelete]
         public bool Delete([FromBody] Brand body)
         {
-            context.Remove(body); //Delete -> precisa ter SOMENTE o ID (outros parâmetros -> opcional)
-            context.SaveChanges();
-            return true;
+            return brandService.Delete(body);
         }
 
-        [HttpDelete("[action]")]
-        public bool DeleteById([FromQuery] int id)
+        [HttpDelete("{id:int}")]
+        public bool Delete([FromRoute] int id)
         {
-            context.Brands.Remove(new Brand() { BrandId = id });
-            context.SaveChanges();
-            return true;
+            return brandService.Delete(id);
         }
     }
 }

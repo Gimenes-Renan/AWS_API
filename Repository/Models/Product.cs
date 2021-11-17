@@ -19,5 +19,6 @@ namespace WebAPI_AWS.Model
         public decimal ListPrice { get; set; }
 
         public Category Category { get; set; }
+        public Brand Brand { get; set; }
     }
 }

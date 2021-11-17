@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AWS_API.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ReactCrud.Models;
 using System;
@@ -13,50 +14,69 @@ namespace WebAPI_AWS.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        private readonly DatabaseContext context;
+        private readonly CategoryService categoryService;
 
-        public CategoryController(DatabaseContext context)
+        public CategoryController(CategoryService categoryService)
         {
-            this.context = context;
+            this.categoryService = categoryService;
         }
 
         [HttpGet]
         public IEnumerable<Category> Get()
         {
-            return context.Categories.ToArray();
+            return categoryService.Get();
+        }
+
+        [HttpGet("[action]")]
+        public IEnumerable<Category> Search([FromQuery] string title)
+        {
+            if (!string.IsNullOrEmpty(title))
+            {
+                return categoryService.Get().Where(p => p.CategoryName.ToLower().Contains(title.ToLower()));
+            }
+            return categoryService.Get();
         }
 
 
         [HttpPost]
-        public Category Post([FromBody] Category body)
+        public IActionResult Post([FromBody] Category body)
         {
-            var data = context.Add(body);
-            context.SaveChanges();
-            return data.Entity;
+            try
+            {
+                return Ok(categoryService.Add(body));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut]
         public Category Put([FromBody] Category body)
         {
-            var data = context.Update(body);
-            context.SaveChanges();
-            return data.Entity;
+            return categoryService.Put(body);
+        }
+
+        [HttpPut("{id:int}")]
+        public Category Put([FromRoute] int id, [FromBody] Category body)
+        {
+            if (id == body.CategoryId)
+            {
+                return categoryService.Put(body);
+            }
+            return null;
         }
 
         [HttpDelete]
         public bool Delete([FromBody] Category body)
         {
-            context.Remove(body);
-            context.SaveChanges();
-            return true;
+            return categoryService.Delete(body);
         }
 
-        [HttpDelete("[action]")]
-        public bool DeleteById([FromQuery] int id)
+        [HttpDelete("{id:int}")]
+        public bool Delete([FromRoute] int id)
         {
-            context.Categories.Remove(new Category() { CategoryId = id });
-            context.SaveChanges();
-            return true;
+            return categoryService.Delete(id);
         }
     }
 }

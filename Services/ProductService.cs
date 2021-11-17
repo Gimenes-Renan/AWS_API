@@ -20,6 +20,7 @@ namespace AWS_API.Services
         {
             var query = from product in context.Products
                         join category in context.Categories on product.CategoryId equals category.CategoryId
+                        join brand in context.Brands on product.BrandId equals brand.BrandId
                         select new Product                       {
                             ProductId = product.ProductId,
                             BrandId = product.BrandId,
@@ -27,7 +28,8 @@ namespace AWS_API.Services
                             ListPrice = product.ListPrice,
                             Quantity = product.Quantity,
                             ProductName = product.ProductName,
-                            Category = category
+                            Category = category,
+                            Brand = brand
                         };
             return query.ToArray();
         }
