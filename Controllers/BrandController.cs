@@ -27,6 +27,12 @@ namespace WebAPI_AWS.Controllers
             return brandService.Get();
         }
 
+        [HttpGet("{id:int}")]
+        public Brand Get([FromRoute] int id)
+        {
+            return brandService.Get().Where(p => p.BrandId == id).FirstOrDefault();
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<Brand> Search([FromQuery] string title)
         {

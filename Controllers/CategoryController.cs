@@ -27,6 +27,12 @@ namespace WebAPI_AWS.Controllers
             return categoryService.Get();
         }
 
+        [HttpGet("{id:int}")]
+        public Category Get([FromRoute] int id)
+        {
+            return categoryService.Get().Where(p => p.CategoryId == id).FirstOrDefault();
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<Category> Search([FromQuery] string title)
         {
